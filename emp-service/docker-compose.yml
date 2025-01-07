@@ -1,0 +1,25 @@
+version: '3.1'
+services:
+   mysqldb:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p root || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+   emp-service:
+    image: empImg
+    ports:
+      - "9991:8084"
+    environment:
+      - DB_URL=jdbc:mysql://mysqldb:3306/mysql
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      - mysqldb
+    restart: always
